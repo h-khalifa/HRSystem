@@ -18,8 +18,8 @@ namespace HR_Employes.Models
         [DataType(DataType.Date)]
         public DateTime? BirthDate { get; set; }
         [Required]
-        [DataType(DataType.PhoneNumber, ErrorMessage = "Invalid Phone Number")]
-        [RegularExpression(@"^([0-9]{10})$", ErrorMessage = "Invalid Phone Number.")]
+        [DataType(DataType.PhoneNumber, ErrorMessage = "Invalid Phone Number.")]
+        [RegularExpression(@"^([0-9]{8,11})$", ErrorMessage = "Invalid Phone Number! only digits of length between 8 and 11")]
         [Display(Name ="Phone")]
         public string MobileNumber { get; set; }
         [Remote(action: "ValidateExistingEmployeCode", controller: "Employes")]

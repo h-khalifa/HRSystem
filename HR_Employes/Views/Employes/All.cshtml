@@ -1,0 +1,108 @@
+﻿@{
+    ViewData["Title"] = "All Employes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Employes Info</h1>
+<div>
+    <div class="row" style="margin-top:60px;">
+        <div class="col-4">
+            <label class="control-label">Managers:</label>
+            <select class="form-select" id="mngrs">
+                <option value="-1">Select A Manager</option>
+            </select>
+            <div style="margin-top:40px;">
+                <button class="btn btn-primary" onclick="renderEmployeesTable()">Filter</button>
+            </div>
+
+        </div>
+        <div class="col-8">
+            <table id="table_id" class="display nowrap dataTable dtr-inline collapsed">
+                <thead>
+                    <tr>
+                        <th>Employee Name</th>
+                        <th>Employee Code</th>
+                        <th>Employee Email</th>
+                        <th>Manager</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <a href="./Employes/create" class="btn btn-outline-success">Add New Employee</a>
+</div>
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+
+<script>
+        $(document).ready( function () {
+        $('#table_id').DataTable({
+            paging: true,
+            ordering:true,
+            searching:false,
+            pageLength:10
+        });
+        renderManagersList();
+        renderEmployeesTable();
+    } );
+
+    function renderManagersList(){
+        $.ajax({
+            type:'GET',
+            url:"/API/Employees/GetManagers",
+            success: function(d){
+                let htm = '';
+                d.forEach((mngr) => {htm += ('<option value="'+mngr.id+'">'+mngr.name+'</option>');});
+                $("#mngrs").append(htm);
+            },
+            error: function(p1, p2, p3){
+                console.log(p1);
+                console.log(p2);
+                console.log(p3);
+            }
+        })
+    }
+    
+    function renderEmployeesTable(){
+        let mngrId = $("#mngrs").val();
+        let uri = ""
+        if(mngrId > 0){
+            uri = "/API/Employees/GetAllByManager?ManagerId=" + mngrId;
+            $('#table_id').DataTable().column(3).visible(false)
+        }
+        else{
+            uri = "/API/Employees/GetAll"
+            $('#table_id').DataTable().column(3).visible(true);
+        }
+
+         $.ajax({
+            type:'GET',
+            url:uri,
+            success: function(d){
+                console.log(d);
+                $('#table_id').DataTable().rows().remove();
+                let htm = '';
+                d.forEach((emp) =>{
+                    if(emp.manager == null){
+                        emp.manager = '';
+                    }
+                    htm = ('<tr><td>'+emp.name+'</td><td>'+emp.code+'</td><td>'+emp.email+'</td><td>'+emp.manager+'</td></tr>');
+                    $('#table_id').DataTable().row.add($(htm)).draw();
+                });
+                //$('#table_id').DataTable().data.reload().draw();
+                ////$("#table_id tbody").html('');
+                ////$("#table_id tbody").append(htm);
+            },
+            error: function(p1, p2, p3){
+                console.log(p1);
+                console.log(p2);
+                console.log(p3);
+            }
+        })
+    }
+</script>

@@ -20,6 +20,8 @@ builder.Services.AddScoped<IBaseRepository<Attendance>, BaseRepository<Attendanc
 //builder.Services.AddScoped<DbContext, HREntities>();
 builder.Services.AddDbContext<HREntities>();
 
+builder.Services.AddRazorPages()
+    .AddRazorRuntimeCompilation();
 
 var app = builder.Build();
 
