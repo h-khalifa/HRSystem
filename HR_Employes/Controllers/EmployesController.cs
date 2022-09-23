@@ -59,7 +59,7 @@ namespace HR_Employes.Controllers
         {
             var emp = _db.EmployesRepo.Find(emp => emp.Code == managerCode);
             if (emp == null)
-                return Json("Not Existing Manager");
+                return Json("Not Existing Employee.!");
             else
                 return Json(true);
 
